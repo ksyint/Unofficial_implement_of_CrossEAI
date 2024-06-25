@@ -42,7 +42,7 @@ def train(model, projection_head, train_loader, val_loader, criterion_ce, criter
                 projections = projection_head(features)
                 
                 loss_ce = criterion_ce(outputs, torch.zeros(outputs.size(0)).long().to(device))  
-                loss_contrastive = criterion_contrastive(projections, projections, torch.zeros(outputs.size(0)).long().to(device))  # dummy target
+                loss_contrastive = criterion_contrastive(projections, projections, torch.zeros(outputs.size(0)).long().to(device))  
                 
                 loss = loss_ce + loss_contrastive
                 val_loss += loss.item()
