@@ -21,8 +21,8 @@ def train(model, projection_head, train_loader, val_loader, criterion_ce, criter
             features, outputs = model(inputs)
             projections = projection_head(features)
 
-            loss_ce = criterion_ce(outputs, torch.zeros(outputs.size(0)).long().to(device))  # dummy target
-            loss_contrastive = criterion_contrastive(projections, projections, torch.zeros(outputs.size(0)).long().to(device))  # dummy target
+            loss_ce = criterion_ce(outputs, torch.zeros(outputs.size(0)).long().to(device))  
+            loss_contrastive = criterion_contrastive(projections, projections, torch.zeros(outputs.size(0)).long().to(device))  
 
             loss = loss_ce + loss_contrastive
             loss.backward()
@@ -31,8 +31,7 @@ def train(model, projection_head, train_loader, val_loader, criterion_ce, criter
             running_loss += loss.item()
 
         avg_train_loss = running_loss / len(train_loader)
-        
-        # Validation phase
+    
         model.eval()
         projection_head.eval()
         val_loss = 0.0
@@ -42,7 +41,7 @@ def train(model, projection_head, train_loader, val_loader, criterion_ce, criter
                 features, outputs = model(inputs)
                 projections = projection_head(features)
                 
-                loss_ce = criterion_ce(outputs, torch.zeros(outputs.size(0)).long().to(device))  # dummy target
+                loss_ce = criterion_ce(outputs, torch.zeros(outputs.size(0)).long().to(device))  
                 loss_contrastive = criterion_contrastive(projections, projections, torch.zeros(outputs.size(0)).long().to(device))  # dummy target
                 
                 loss = loss_ce + loss_contrastive
@@ -50,11 +49,10 @@ def train(model, projection_head, train_loader, val_loader, criterion_ce, criter
         
         avg_val_loss = val_loss / len(val_loader)
 
-        # Save the model if validation loss is the best we've seen so far.
         if avg_val_loss < best_val_loss:
             best_val_loss = avg_val_loss
-            torch.save(model.state_dict(), 'best_model.pth')
-            torch.save(projection_head.state_dict(), 'best_projection_head.pth')
+            torch.save(model.state_dict(), 'best.pth')
+            torch.save(projection_head.state_dict(), 'best_project.pth')
 
         print(f"Epoch {epoch + 1}/{num_epochs}, Train Loss: {avg_train_loss}, Val Loss: {avg_val_loss}")
 
@@ -63,8 +61,8 @@ if __name__ == "__main__":
     model = ResNet50().to(device)
     projection_head = ProjectionHead(input_dim=2048, projection_dim=128).to(device)
 
-    train_loader = get_dataloader("path_to_train_data", batch_size=32)
-    val_loader = get_dataloader("path_to_val_data", batch_size=32, shuffle=False)
+    train_loader = get_dataloader("traindata", batch_size=1,shuffle=True)
+    val_loader = get_dataloader("valdata", batch_size=1, shuffle=False)
 
     criterion_ce = nn.CrossEntropyLoss()
     criterion_contrastive = ContrastiveLoss()
