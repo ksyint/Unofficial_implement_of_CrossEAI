@@ -38,5 +38,5 @@ def process_image(image_path, model):
     visualize_bounding_box(image[0], bbox)
 
 if __name__ == "__main__":
-    model, projection_head = load_model("best_model.pth", "best_projection_head.pth")
-    process_image("path_to_image.jpg", model)
+    model, projection_head = load_model("best.pth", "best_project.pth")
+    process_image("img.jpg", model)
